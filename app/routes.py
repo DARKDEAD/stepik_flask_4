@@ -43,11 +43,11 @@ def render_search(goal_name):
 
 @app.route("/profiles/<int:id_teacher>/")
 def render_profile(id_teacher):
-    teachers_query = Teacher.query.all()
+    teachers_query = Teacher.query.filter(Teacher.id == id_teacher).first()
     schedule = Schedule.query.filter(Schedule.teacher_id == id_teacher).all()
     return render_template(
         "profile.html",
-        teacher=teachers_query[id_teacher],
+        teacher=teachers_query,
         goals=Goal.query.all(),
         day_week=ReadData.day_week,
         id_teacher=id_teacher,
