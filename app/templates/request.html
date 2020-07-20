@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% include 'base_nav.html' %}
+
+{% block container %}
+    <div class="col-12 col-sm-10 col-lg-6 offset-lg-3 offset-sm-1">
+        <form method="POST" action="/request_done/" class="card mb-5 w-80">
+            <div class="card-body text-center pt-5">
+                <h1 class="h3 card-title mt-4 mb-2">Подбор преподавателя</h1>
+                <p class="px-5">Напишите, чего вам нужно и&nbsp;мы&nbsp;подберем отличных&nbsp;ребят</p>
+            </div>
+            <hr>
+            {{ form.csrf_token() }}
+            <div class="card-body mx-2">
+                <div class="row">
+
+                    <div class="col">
+                        <p>Какая цель занятий?</p>
+                        <div>
+                            {{ form.goals(class="form-check") }}
+                        </div>
+                    </div>
+                    <div class="col">
+                        <p>Сколько времени есть?</p>
+                        <div>
+                            {% for err in form.time.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ err }}
+                                </p>
+                            {% endfor %}
+                            {{ form.time(class="form-check") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="card-body mx-3">
+                <label class="mb-1 mt-2">Вас зовут</label>
+                {% for err in form.clientName.errors %}
+                    <p class="error">{{ err }}</p>
+                {% endfor %}
+                {{ form.clientName(class="form-control") }}
+                <label class="mb-1 mt-2">Ваш телефон</label>
+                {% for err in form.clientPhone.errors %}
+                    <p class="error">{{ err }}</p>
+                {% endfor %}
+                {{ form.clientPhone(class="form-control") }}
+                <input type="submit" class="btn btn-primary mt-4 mb-2" value="Найдите мне преподавателя">
+            </div>
+        </form>
+    </div>
+{% endblock %}
