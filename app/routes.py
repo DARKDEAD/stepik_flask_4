@@ -21,11 +21,11 @@ def render_index():
         teachers = teachers_query
 
     return render_template(
-        "index.html",
-        teachers=teachers,
-        pic_goals=ReadData.pic_goal,
-        goals=Goal.query.all(),
-        href_goals=ReadData.href_goal,
+            "index.html",
+            teachers=teachers,
+            pic_goals=ReadData.pic_goal,
+            goals=Goal.query.all(),
+            href_goals=ReadData.href_goal,
     )
 
 
@@ -34,24 +34,26 @@ def render_search(goal_name):
     goal = Goal.query.filter(Goal.name == goal_name).first()
 
     return render_template(
-        "goal.html",
-        teachers=goal.teachers,
-        goal=goal.name_ru,
-        pic_goals=ReadData.pic_goal.get(goal_name, ""),
+            "goal.html",
+            teachers=goal.teachers,
+            goal=goal.name_ru,
+            pic_goals=ReadData.pic_goal.get(goal_name, ""),
     )
 
 
 @app.route("/profiles/<int:id_teacher>/")
 def render_profile(id_teacher):
     teachers_query = Teacher.query.filter(Teacher.id == id_teacher).first()
+    if teachers_query == None:
+        return render_template('404.html', text='Преподователь не найден')
     schedule = Schedule.query.filter(Schedule.teacher_id == id_teacher).all()
     return render_template(
-        "profile.html",
-        teacher=teachers_query,
-        goals=Goal.query.all(),
-        day_week=ReadData.day_week,
-        id_teacher=id_teacher,
-        schedule=schedule,
+            "profile.html",
+            teacher=teachers_query,
+            goals=Goal.query.all(),
+            day_week=ReadData.day_week,
+            id_teacher=id_teacher,
+            schedule=schedule,
     )
 
 
@@ -79,9 +81,9 @@ def render_request_done():
         db.session.commit()
 
         return render_template(
-            "request_done.html",
-            goal=Goal.query.filter(Goal.id == goal).first(),
-            form=form,
+                "request_done.html",
+                goal=Goal.query.filter(Goal.id == goal).first(),
+                form=form,
         )
     else:
         return render_template("request.html", form=form)
@@ -93,21 +95,21 @@ def render_booking(id_teacher, id_schedule):
     schedule_query = Schedule.query.filter(Schedule.id == id_schedule).first()
     form = BookingForm()
     return render_template(
-        "booking.html",
-        form=form,
-        teacher=teachers_query,
-        day=ReadData.day_week.get(schedule_query.day_week, ""),
-        schedule=schedule_query,
+            "booking.html",
+            form=form,
+            teacher=teachers_query,
+            day=ReadData.day_week.get(schedule_query.day_week, ""),
+            schedule=schedule_query,
     )
 
 
 @app.route("/booking_done/", methods=["GET", "POST"])
 def render_booking_done():
     teacher = Teacher.query.filter(
-        Teacher.id == int(request.form.get("clientTeacher"))
+            Teacher.id == int(request.form.get("clientTeacher"))
     ).first()
     schedule = Schedule.query.filter(
-        Schedule.id == int(request.form.get("schedule"))
+            Schedule.id == int(request.form.get("schedule"))
     ).first()
 
     form = BookingForm()
@@ -125,16 +127,16 @@ def render_booking_done():
         db.session.commit()
 
         db.session.add(
-            Booking(client=client.id, teacher=teacher.id, schedule=schedule.id)
+                Booking(client=client.id, teacher=teacher.id, schedule=schedule.id)
         )
         db.session.commit()
 
         return render_template(
-            "booking_done.html",
-            name=name,
-            phone=phone,
-            day=ReadData.day_week.get(schedule.day_week, ""),
-            time=schedule.time,
+                "booking_done.html",
+                name=name,
+                phone=phone,
+                day=ReadData.day_week.get(schedule.day_week, ""),
+                time=schedule.time,
         )
     else:
         return url_for("booking.html")
